@@ -1,0 +1,20 @@
+name: ambufast-auth-service-CI pipeline
+
+on:
+  push:
+    branches: ["dev"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build the Docker image
+        uses: actions/checkout@v4
+      - name: Build the Docker image
+        run: |
+          docker build . -t ghcr.io/tech-analytica-limited/ambufast-auth-service:latest
+      - name: Push the image to github org packages
+        run: |
+          docker login --username manassaharoy --password ${{ secrets.USER_GITHUB_TOKEN }} ghcr.io
+          docker push ghcr.io/tech-analytica-limited/ambufast-auth-service:latest

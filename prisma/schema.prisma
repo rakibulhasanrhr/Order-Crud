@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId      String   @id @unique @default(uuid())
+  fullName    String
+  phoneNumber String   @unique
+  email       String
+  password    String
+  role        String
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Order       Order[]
+
+  @@index([phoneNumber])
+}
+
+model Order {
+  orderId         String   @id @unique @default(uuid())
+  pickupLocation  String
+  dropOffLocation String
+  ambulance       String
+  phoneNumber     String   @unique
+  fullName        String?
+  dateOfBirth     DateTime
+  email           String?
+  phone           String?
+  address         String?
+  orderCreatedBy  User?    @relation(fields: [userId], references: [userId])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  userId          String?
+}
