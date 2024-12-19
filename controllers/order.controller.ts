@@ -57,55 +57,129 @@ const createOrder = errorWrapper(
 
 const getAllOrders = errorWrapper(
 
+    async (req: Request, res: Response) => {
 
+        const filters = "name:as:Augy:like:userID:as:DPA00002542:like:email:as:acharker1r@technorati.com"
+        const pairs = filters.split(":like:")
 
-    async (req: Request, res: Response, next: NextFunction) => {
-        // Validate the incoming data
-        // const validatedData = userSchema.parse(req.body);
-        // const { fullName, modulePermissions, password, } = validatedData
-        // const { ...userData } = req.body as User
+        const result = pairs.map(item => {
+            const [key, value] = item.split(':as:');
+            return { [key as string]: value }
+        });
+        console.log(result)
 
-        const { orderId, email, phoneNumber } = req.query;
-        // if (!req.file) {
-        //     throw new ErrorHandler(
-        //         "Please provide all required fields",
-        //         StatusCodes.BAD_REQUEST
-        //     );
-        // }
+        const where: any = {};
 
-        // const uniqueFileName = generateUniqueFileName(req.file.originalname);
+        const allOrders = await prisma.order.findMany({
+            where: {
+                result: {
 
-        // await uploadToBucket(req, null, uniqueFileName);
-        // const imageUrl = `https://jsgreenmedialtd.sgp1.digitaloceanspaces.com/${uniqueFileName}`;
-
-
-        // const { orderId } = req.query as { orderId: string };
-        // const { phoneNumber } = req.query as { phoneNumber: string };
-        // const { email } = req.query as { email: string };
-
-        const filters: any = {};
-
-        if (orderId) filters.orderId = orderId;
-        if (email) filters.email = email;
-        if (phoneNumber) filters.phoneNumber = phoneNumber;
-
-
-        const allOrder = await prisma.order.findMany({
-            where: filters,
-            include: {
-                orderCreatedBy: true,
-
+                }
             }
-
         });
 
         sendResponse(
             res,
-            StatusCodes.OK,
-            { allOrder },
-            "All Order"
+            StatusCodes.CREATED,
+            allOrders,
+            "Order created successfully"
         );
+
+        // const filters = req.query;
+        // const orderKeys: string[] = [
+        //     'orderId',
+        //     'pickupLocation',
+        //     'dropOffLocation',
+        //     'ambulance',
+        //     'phoneNumber',
+        //     'fullName',
+        //     'dateOfBirth',
+        //     'email',
+        //     'phone',
+        //     'address',
+        //     'orderCreatedBy',
+        //     'createdAt',
+        //     'updatedAt',
+        //     'userId'
+        // ];
+
+        // const where: any = {};
+
+
+        // for (const key of orderKeys) {
+        //     if (filters[key]) {
+        //         where[key] = {
+        //             contains: String(filters[key]),
+        //             mode: 'insensitive',
+        //         };
+        //     }
+        // }
+        // const allOrders = await prisma.order.findMany({
+        //     where
+        // });
+
+        // sendResponse(
+        //     res,
+        //     StatusCodes.CREATED,
+        //     allOrders,
+        //     "Order created successfully"
+        // );
+
     }
+
+
+
+
+
+
+
+    // async (req: Request, res: Response, next: NextFunction) => {
+    //     // Validate the incoming data
+    //     // const validatedData = userSchema.parse(req.body);
+    //     // const { fullName, modulePermissions, password, } = validatedData
+    //     // const { ...userData } = req.body as User
+
+    //     const { orderId, email, phoneNumber } = req.query;
+    //     // if (!req.file) {
+    //     //     throw new ErrorHandler(
+    //     //         "Please provide all required fields",
+    //     //         StatusCodes.BAD_REQUEST
+    //     //     );
+    //     // }
+
+    //     // const uniqueFileName = generateUniqueFileName(req.file.originalname);
+
+    //     // await uploadToBucket(req, null, uniqueFileName);
+    //     // const imageUrl = `https://jsgreenmedialtd.sgp1.digitaloceanspaces.com/${uniqueFileName}`;
+
+
+    //     // const { orderId } = req.query as { orderId: string };
+    //     // const { phoneNumber } = req.query as { phoneNumber: string };
+    //     // const { email } = req.query as { email: string };
+
+    //     const filters: any = {};
+
+    //     if (orderId) filters.orderId = orderId;
+    //     if (email) filters.email = email;
+    //     if (phoneNumber) filters.phoneNumber = phoneNumber;
+
+
+    //     const allOrder = await prisma.order.findMany({
+    //         where: filters,
+    //         include: {
+    //             orderCreatedBy: true,
+
+    //         }
+
+    //     });
+
+    //     sendResponse(
+    //         res,
+    //         StatusCodes.OK,
+    //         { allOrder },
+    //         "All Order"
+    //     );
+    // }
 );
 
 const updateOrder = errorWrapper(
