@@ -56,15 +56,16 @@ const createOrder = errorWrapper(
 );
 
 const getAllOrders = errorWrapper(
+
+
+
     async (req: Request, res: Response, next: NextFunction) => {
         // Validate the incoming data
         // const validatedData = userSchema.parse(req.body);
         // const { fullName, modulePermissions, password, } = validatedData
         // const { ...userData } = req.body as User
 
-
-
-
+        const { orderId, email, phoneNumber } = req.query;
         // if (!req.file) {
         //     throw new ErrorHandler(
         //         "Please provide all required fields",
@@ -78,37 +79,30 @@ const getAllOrders = errorWrapper(
         // const imageUrl = `https://jsgreenmedialtd.sgp1.digitaloceanspaces.com/${uniqueFileName}`;
 
 
-        const { orderId } = req.query as { orderId: string };
-        const { phoneNumber } = req.query as { phoneNumber: string };
-        const { email } = req.query as { email: string };
+        // const { orderId } = req.query as { orderId: string };
+        // const { phoneNumber } = req.query as { phoneNumber: string };
+        // const { email } = req.query as { email: string };
 
         const filters: any = {};
 
-        if (orderId) {
-            filters.orderId = { orderId }; // Ensure id is an integer
-        }
-
-        if (email) {
-            filters.order = { email }; // Filter by user email
-        }
-
-        if (phoneNumber) {
-            filters.order = { phoneNumber }; // Filter by user phoneNumber
-        }
+        if (orderId) filters.orderId = orderId;
+        if (email) filters.email = email;
+        if (phoneNumber) filters.phoneNumber = phoneNumber;
 
 
         const allOrder = await prisma.order.findMany({
             where: filters,
-            // include: {
-            //     orderCreatedBy: true
-            // }
+            include: {
+                orderCreatedBy: true,
+
+            }
 
         });
 
         sendResponse(
             res,
             StatusCodes.OK,
-            allOrder,
+            { allOrder },
             "All Order"
         );
     }
